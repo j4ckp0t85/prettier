@@ -4,6 +4,7 @@ import {
   ifBreak,
   indent,
   join,
+  joinByGroup,
   line,
   softline,
 } from "../../document/builders.js";
@@ -197,10 +198,10 @@ function printModuleSpecifiers(path, options, print) {
       }
 
       const canBreak =
-        groupedSpecifiers.length > 1 ||
-        standaloneSpecifiers.length > 0 ||
-        node.specifiers.some((node) => hasComment(node));
-
+        options.importsPerRow === 1 &&
+        (groupedSpecifiers.length > 1 ||
+          standaloneSpecifiers.length > 0 ||
+          node.specifiers.some((node) => hasComment(node)));
       if (canBreak) {
         parts.push(
           group([
@@ -215,13 +216,32 @@ function printModuleSpecifiers(path, options, print) {
           ]),
         );
       } else {
-        parts.push([
-          "{",
-          options.bracketSpacing ? " " : "",
-          ...groupedSpecifiers,
-          options.bracketSpacing ? " " : "",
-          "}",
-        ]);
+        if (options.importsPerRow === 1 || groupedSpecifiers.length === 1) {
+          parts.push([
+            "{",
+            options.bracketSpacing ? " " : "",
+            ...groupedSpecifiers,
+            options.bracketSpacing ? " " : "",
+            "}",
+          ]);
+        } else {
+          parts.push(
+            group([
+              "{",
+              indent([
+                options.bracketSpacing ? line : softline,
+                joinByGroup(
+                  [",", line],
+                  options.importsPerRow,
+                  groupedSpecifiers,
+                ),
+              ]),
+              ifBreak(shouldPrintComma(options) ? "," : ""),
+              options.bracketSpacing ? line : softline,
+              "}",
+            ]),
+          );
+        }
       }
     }
   } else {

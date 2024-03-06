@@ -22,6 +22,14 @@ const options = {
   },
   bracketSameLine: commonOptions.bracketSameLine,
   bracketSpacing: commonOptions.bracketSpacing,
+  importsPerRow: {
+    since: "1.10.0",
+    category: CATEGORY_JAVASCRIPT,
+    type: "int",
+    default: 1,
+    description:
+      "Defines the number of imports that should be grouped together in a row.",
+  },
   jsxBracketSameLine: {
     category: CATEGORY_JAVASCRIPT,
     type: "boolean",

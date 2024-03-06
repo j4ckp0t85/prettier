@@ -199,6 +199,32 @@ function join(separator, docs) {
 }
 
 /**
+ * @param {Doc} separator
+ * @param {number} itemsPerRow
+ * @param {Doc[]} docs
+ * @returns Doc
+ */
+function joinByGroup(separator, itemsPerRow, docs) {
+  assertDoc(separator);
+  assertDocArray(docs);
+
+  const parts = [];
+
+  for (let i = 0; i < docs.length; i++) {
+    if (i !== 0) {
+      if (i % itemsPerRow === 0) {
+        parts.push(separator);
+      } else {
+        parts.push(", ");
+      }
+    }
+    parts.push(docs[i]);
+  }
+
+  return parts;
+}
+
+/**
  * @param {Doc} doc
  * @param {number} size
  * @param {number} tabWidth
@@ -248,6 +274,7 @@ export {
   indent,
   indentIfBreak,
   join,
+  joinByGroup,
   label,
   line,
   lineSuffix,
